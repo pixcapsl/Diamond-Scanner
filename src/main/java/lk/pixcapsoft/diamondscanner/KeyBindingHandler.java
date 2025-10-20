@@ -32,31 +32,38 @@ public class KeyBindingHandler {
     }
 
     private static void scanForDiamonds(MinecraftClient client) {
-        if (client.player == null || client.world == null) return;
-        client.player.sendMessage(Text.literal("Starting scanning engine..."),false);
+    if (client.player == null || client.world == null) return;
+    
+    // Only allow in singleplayer
+    if (!client.isInSingleplayer()) {
+        client.player.sendMessage(Text.literal("§cDiamond Scanner only works in singleplayer worlds."), false);
+        return;
+    }
+    
+    client.player.sendMessage(Text.literal("Starting scanning engine..."), false);
 
-        BlockPos playerPos = client.player.getBlockPos();
-        int radius = 32;
-        int found = 0;
+    BlockPos playerPos = client.player.getBlockPos();
+    int radius = 32;
+    int found = 0;
 
-        for (int x = -radius; x <= radius; x++) {
-            for (int y = -radius; y <= radius; y++) {
-                for (int z = -radius; z <= radius; z++) {
-                    BlockPos scanPos = playerPos.add(x, y, z);
-                    if (client.world.getBlockState(scanPos).isOf(Blocks.DIAMOND_ORE) ||
-                            client.world.getBlockState(scanPos).isOf(Blocks.DEEPSLATE_DIAMOND_ORE)) {
-                        client.player.sendMessage(Text.literal("💎 Found diamond at: " + scanPos.toShortString()), false);
-                        found++;
-                    }
+    for (int x = -radius; x <= radius; x++) {
+        for (int y = -radius; y <= radius; y++) {
+            for (int z = -radius; z <= radius; z++) {
+                BlockPos scanPos = playerPos.add(x, y, z);
+                if (client.world.getBlockState(scanPos).isOf(Blocks.DIAMOND_ORE) ||
+                        client.world.getBlockState(scanPos).isOf(Blocks.DEEPSLATE_DIAMOND_ORE)) {
+                    client.player.sendMessage(Text.literal("💎 Found diamond at: " + scanPos.toShortString()), false);
+                    found++;
                 }
             }
         }
-
-        if (found == 0) {
-            client.player.sendMessage(Text.literal("No diamonds found nearby."), false);
-        } else {
-            client.player.sendMessage(Text.literal("Scan complete. Found " + found + " diamond ores."), false);
-            client.player.sendMessage((Text.literal("Open chat if you only seeing few...")),false);
-        }
     }
+
+    if (found == 0) {
+        client.player.sendMessage(Text.literal("No diamonds found nearby."), false);
+    } else {
+        client.player.sendMessage(Text.literal("Scan complete. Found " + found + " diamond ores."), false);
+        client.player.sendMessage((Text.literal("Open chat if you only seeing few...")), false);
+    }
+}
 }
