@@ -1,0 +1,18 @@
+{
+  "name": "Minecraft Fabric Modding",
+  "image": "mcr.microsoft.com/devcontainers/java:17",
+  "features": {
+    "gradle": "latest"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "redhat.java",
+        "fabricmc.vscode-fabric"
+      ]
+    }
+  },
+  "forwardPorts": [25565],
+  "remoteUser": "vscode"
+}
