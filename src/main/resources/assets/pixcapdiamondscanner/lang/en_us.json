@@ -1,4 +1,5 @@
 {
-  "key.pixcapdiamondscanner.scan": "Scan for Diamonds",
-  "key.category.pixcapdiamondscanner.category": "Pixcap Diamond Scanner"
+  "key.pixcapdiamondscanner.scan": "Scan for Ores",
+  "key.pixcapdiamondscanner.openresults": "Open Last Scan Results",
+  "key.categories.pixcapdiamondscanner": "Diamond Scanner"
 }
