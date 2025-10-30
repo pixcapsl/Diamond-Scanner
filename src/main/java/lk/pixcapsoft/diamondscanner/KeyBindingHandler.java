@@ -24,18 +24,21 @@ public class KeyBindingHandler {
     private static String lastScanType = "No scan performed yet";
 
     public static void register() {
+        // Create category once and reuse it
+        String category = "key.categories.pixcapdiamondscanner";
+        
         scanKey = new KeyBinding(
                 "key.pixcapdiamondscanner.scan",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_G,
-                KeyBinding.Category.create(Identifier.of("pixcapdiamondscanner", "category"))
+                category
         );
         
         openResultsKey = new KeyBinding(
                 "key.pixcapdiamondscanner.openresults",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_H,
-                KeyBinding.Category.create(Identifier.of("pixcapdiamondscanner", "category"))
+                category
         );
 
         KeyBindingHelper.registerKeyBinding(scanKey);
