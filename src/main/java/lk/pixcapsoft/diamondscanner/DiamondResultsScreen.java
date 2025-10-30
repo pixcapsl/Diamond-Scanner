@@ -9,15 +9,17 @@ import java.util.List;
 
 public class DiamondResultsScreen extends Screen {
     private final Screen parent;
-    private final List<BlockPos> diamondPositions;
+    private final List<BlockPos> orePositions;
+    private final String oreType;
     private int scrollOffset = 0;
     private static final int LINE_HEIGHT = 12;
     private static final int VISIBLE_LINES = 15;
 
-    public DiamondResultsScreen(Screen parent, List<BlockPos> diamondPositions) {
-        super(Text.literal("Diamond Scan Results"));
+    public DiamondResultsScreen(Screen parent, List<BlockPos> orePositions, String oreType) {
+        super(Text.literal(oreType + " Scan Results"));
         this.parent = parent;
-        this.diamondPositions = diamondPositions;
+        this.orePositions = orePositions;
+        this.oreType = oreType;
     }
 
     @Override
@@ -35,29 +37,41 @@ public class DiamondResultsScreen extends Screen {
         // Semi-transparent background
         context.fillGradient(0, 0, this.width, this.height, 0xC0101010, 0xD0101010);
         
-        // Title
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFF);
+        // Title with ore type
+        String titleText = oreType + " Scan Results";
+        context.drawCenteredTextWithShadow(this.textRenderer, titleText, this.width / 2, 15, 0xFFFFFF);
         
-        // Result count
-        String countText = "Found " + diamondPositions.size() + " diamond ore(s)";
-        context.drawCenteredTextWithShadow(this.textRenderer, countText, this.width / 2, 30, 0x55FFFF);
+        // Result count with appropriate color
+        int countColor = oreType.equals("Ancient Debris") ? 0xFF6B3E : 0x55FFFF;
+        String emoji = oreType.equals("Ancient Debris") ? "🔥" : "💎";
+        String countText = "Found " + orePositions.size() + " " + oreType.toLowerCase() + " ore(s)";
+        context.drawCenteredTextWithShadow(this.textRenderer, countText, this.width / 2, 30, countColor);
+        
+        // Keybind reminder
+        context.drawCenteredTextWithShadow(this.textRenderer, "§7Press H to reopen these results anytime", this.width / 2, 45, 0xAAAAAA);
         
         // Box background
         int boxX = this.width / 2 - 150;
-        int boxY = 50;
+        int boxY = 65;
         int boxWidth = 300;
         int boxHeight = VISIBLE_LINES * LINE_HEIGHT + 10;
         
         context.fill(boxX, boxY, boxX + boxWidth, boxY + boxHeight, 0xAA000000);
-        context.drawBorder(boxX, boxY, boxWidth, boxHeight, 0xFF555555);
         
-        // Render diamond positions with scroll
+        // Draw border manually
+        int borderColor = 0xFF555555;
+        context.fill(boxX, boxY, boxX + boxWidth, boxY + 1, borderColor); // Top
+        context.fill(boxX, boxY + boxHeight - 1, boxX + boxWidth, boxY + boxHeight, borderColor); // Bottom
+        context.fill(boxX, boxY, boxX + 1, boxY + boxHeight, borderColor); // Left
+        context.fill(boxX + boxWidth - 1, boxY, boxX + boxWidth, boxY + boxHeight, borderColor); // Right
+        
+        // Render ore positions with scroll
         int startIndex = scrollOffset;
-        int endIndex = Math.min(startIndex + VISIBLE_LINES, diamondPositions.size());
+        int endIndex = Math.min(startIndex + VISIBLE_LINES, orePositions.size());
         
         for (int i = startIndex; i < endIndex; i++) {
-            BlockPos pos = diamondPositions.get(i);
-            String posText = "💎 " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ();
+            BlockPos pos = orePositions.get(i);
+            String posText = emoji + " " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ();
             int textY = boxY + 5 + (i - startIndex) * LINE_HEIGHT;
             context.drawTextWithShadow(this.textRenderer, posText, boxX + 10, textY, 0xFFFFFF);
         }
@@ -66,12 +80,12 @@ public class DiamondResultsScreen extends Screen {
         if (scrollOffset > 0) {
             context.drawCenteredTextWithShadow(this.textRenderer, "▲ Scroll Up", this.width / 2, boxY - 15, 0xFFFF55);
         }
-        if (endIndex < diamondPositions.size()) {
+        if (endIndex < orePositions.size()) {
             context.drawCenteredTextWithShadow(this.textRenderer, "▼ Scroll Down", this.width / 2, boxY + boxHeight + 5, 0xFFFF55);
         }
         
         // Instructions
-        if (diamondPositions.size() > VISIBLE_LINES) {
+        if (orePositions.size() > VISIBLE_LINES) {
             context.drawCenteredTextWithShadow(this.textRenderer, "Use mouse wheel to scroll", this.width / 2, this.height - 50, 0xAAAAAA);
         }
         
@@ -80,7 +94,7 @@ public class DiamondResultsScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        int maxScroll = Math.max(0, diamondPositions.size() - VISIBLE_LINES);
+        int maxScroll = Math.max(0, orePositions.size() - VISIBLE_LINES);
         
         if (verticalAmount > 0) {
             // Scroll up
@@ -97,4 +111,4 @@ public class DiamondResultsScreen extends Screen {
     public boolean shouldPause() {
         return false; // Don't pause the game
     }
-}
+                             }
